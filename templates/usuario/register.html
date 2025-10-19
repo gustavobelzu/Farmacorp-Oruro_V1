@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Registro - Farmacorp{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <h3 class="fw-bold text-center text-primary mb-4">Registro</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success w-100">Registrarse</button>
+                    </form>
+                    <p class="text-center mt-3">
+                        Ya tienes cuenta?
+                        <a href="{% url 'usuario:login' %}">Inicia sesion aqui</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

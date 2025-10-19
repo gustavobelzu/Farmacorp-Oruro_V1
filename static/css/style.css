@@ -1,0 +1,191 @@
+/* Paleta Farmacorp */
+:root {
+  --verde-principal: #198754;   /* Verde Farmacorp */
+  --verde-oscuro: #146c43;
+  --verde-claro: #d1e7dd;
+  --blanco: #ffffff;
+  --gris: #f8f9fa;
+  --dorado: #c9a227;
+  --azul-suave: #0d6efd;
+  --rojo-alerta: #dc3545;
+}
+
+/* Reglas generales */
+body {
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  background-color: var(--gris);
+  margin: 0;
+  color: #333;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+  color: var(--verde-principal);
+}
+
+a {
+  color: var(--verde-principal);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--verde-oscuro);
+}
+
+/*  Navbar */
+.navbar {
+  background-color: var(--verde-principal) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-brand img {
+  margin-right: 8px;
+}
+
+.nav-link {
+  color: var(--blanco) !important;
+  font-weight: 500;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+  color: var(--dorado) !important;
+}
+
+#alertDropdown {
+  font-size: 1.4rem;
+  position: relative;
+}
+
+#alertCount {
+  font-size: 0.7rem;
+  padding: 3px 5px;
+}
+
+/* Contenedor principal */
+.container {
+  margin-top: 30px;
+  margin-bottom: 50px;
+}
+
+/* Tarjetas */
+.card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  background-color: var(--blanco);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  color: var(--verde-oscuro);
+}
+
+/* Tablas */
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 0.95rem;
+}
+.table thead {
+  background-color: var(--verde-principal);
+  color: var(--blanco);
+}
+.table tbody tr:hover {
+  background-color: var(--verde-claro);
+}
+
+/* Botones */
+.btn-success {
+  background-color: var(--verde-principal);
+  border: none;
+}
+.btn-success:hover {
+  background-color: var(--verde-oscuro);
+}
+
+.btn-outline-success {
+  color: var(--verde-principal);
+  border-color: var(--verde-principal);
+}
+.btn-outline-success:hover {
+  background-color: var(--verde-principal);
+  color: var(--blanco);
+}
+
+/* Gráficos */
+canvas {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+/* Alertas */
+.alert {
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.badge.bg-danger {
+  font-size: 0.7rem;
+}
+
+/* Footer */
+footer.footer {
+  text-align: center;
+  background-color: var(--verde-principal);
+  color: var(--blanco);
+  padding: 15px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 20px;
+  }
+  .navbar-brand img {
+    height: 30px;
+  }
+}
+.hero {
+  min-height: 100vh;
+  background-color: var(--verde-principal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--blanco);
+  padding: 40px 20px;
+}
+
+.hero img,
+.hero h1,
+.hero p,
+.hero a {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.hero img { animation-delay: 0.2s; }
+.hero h1 { animation-delay: 0.4s; }
+.hero p { animation-delay: 0.6s; }
+.hero a { animation-delay: 0.8s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Farmacia{% endblock %}
+{% block content %}
+<h2>{% if form.instance.pk %}Editar Farmacia{% else %}Nueva Farmacia{% endif %}</h2>
+<form method="post">
+    {% csrf_token %}{{ form.as_p }}
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'farmacia:list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

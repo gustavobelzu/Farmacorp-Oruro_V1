@@ -1,0 +1,52 @@
+﻿{% extends "base.html" %}
+{% block title %}Productos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">📦 Lista de Productos</h2>
+    <a href="{% url 'productos:producto_create' %}" class="btn btn-success">➕ Nuevo Producto</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-success">
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Precio (Bs)</th>
+            <th>Stock</th>
+            <th>Vencimiento</th>
+            <th>Proveedor</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for producto in productos %}
+        <tr>
+            <td>{{ producto.codigo_barras }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.descripcion }}</td>
+            <td>{{ producto.precio_unitario }}</td>
+            <td>
+                {% if producto.stock < 10 %}
+                    <span class="badge bg-danger">{{ producto.stock }}</span>
+                {% else %}
+                    {{ producto.stock }}
+                {% endif %}
+            </td>
+            <td>{{ producto.fecha_vencimiento|date:"d/m/Y" }}</td>
+            <td>{{ producto.proveedor.nombre }}</td>
+            <td class="d-flex gap-1">
+                <a href="{% url 'productos:update' producto.codigo_barras %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+                <a href="{% url 'productos:delete' producto.codigo_barras %}" class="btn btn-danger btn-sm">🗑️ Eliminar</a>
+                <a href="{% url 'productos:detalle' producto.codigo_barras %}" class="btn btn-info btn-sm">🔍 Detalle</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8" class="text-center text-muted">No hay productos registrados.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

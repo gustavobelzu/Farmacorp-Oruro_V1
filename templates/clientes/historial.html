@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Historial de {{ cliente.nombre }}</h2>
+
+<h4>Ventas</h4>
+<table class="table">
+  <thead><tr><th>ID</th><th>Fecha</th><th>Total</th><th>Sucursal</th></tr></thead>
+  <tbody>
+    {% for v in ventas %}
+    <tr><td>{{ v.id_venta }}</td><td>{{ v.fecha }}</td><td>{{ v.total }}</td><td>{{ v.sucursal.nombre }}</td></tr>
+    {% empty %}<tr><td colspan="4">No hay ventas</td></tr>{% endfor %}
+  </tbody>
+</table>
+
+<h4>Recetas</h4>
+<table class="table">
+  <thead><tr><th>ID</th><th>Fecha</th><th>Médico</th><th>Medicamento</th></tr></thead>
+  <tbody>
+    {% for r in recetas %}
+    <tr><td>{{ r.id_receta }}</td><td>{{ r.fecha_emision }}</td><td>{{ r.Matricula_medico }}</td><td>{{ r.Medicamento }}</td></tr>
+    {% empty %}<tr><td colspan="4">No hay recetas</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

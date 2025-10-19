@@ -1,0 +1,28 @@
+﻿{% extends "base.html" %}
+{% block title %}Reportes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h2>📊 Reportes</h2>
+    <a href="{% url 'reportes:Dashboard' %}" class="btn btn-success">➕ Nuevo Reporte</a>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr><th>ID</th><th>Fecha</th><th>Tipo</th><th>Sucursal</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for rep in reportes %}
+        <tr>
+            <td>{{ rep.id_Reporte }}</td>
+            <td>{{ rep.Fecha_Reporte }}</td>
+            <td>{{ rep.Tipo }}</td>
+            <td>{{ rep.Sucursal.nombre }}</td>
+            <td>
+                <a href="{% url 'reportes:update' rep.id_Reporte %}" class="btn btn-warning btn-sm">✏️</a>
+                <a href="{% url 'reportes:delete' rep.id_Reporte %}" class="btn btn-danger btn-sm">🗑️</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center">No hay reportes</td></tr>{% endfor %}
+    </tbody>
+</table>
+{% endblock %}

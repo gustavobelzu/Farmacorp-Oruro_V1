@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Formulario de Sucursal{% endblock %}
+{% block content %}
+<h2>{{ form.instance.id_sucursal|default:"Nueva" }} Sucursal</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="{% url 'farmacia:listf' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

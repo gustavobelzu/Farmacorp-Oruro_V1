@@ -1,0 +1,78 @@
+﻿{% extends "base.html" %}
+{% block title %}Inventario{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h2> Inventario</h2>
+    <a href="{% url 'inventario:create' %}" class="btn btn-success">➕ Nuevo Registro</a>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr><th>ID</th><th>Producto</th><th>Sucursal</th><th>Cantidad</th><th>Stock Mínimo</th><th>Estado</th><th>Última actualización</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for inv in inventarios %}
+        <tr>
+            <td>{{ inv.id_inventario }}</td>
+            <td>{{ inv.producto.nombre }}</td>
+            <td>{{ inv.sucursal.nombre }}</td>
+            <td>{{ inv.cantidad }}</td>
+            <td>{{ inv.stock_minimo }}</td>
+            <td>{% if inv.estado %}Activo{% else %}Inactivo{% endif %}</td>
+            <td>{{ inv.fecha_actualizacion }}</td>
+            <td>
+                <a href="{% url 'inventario:update' inv.id_inventario %}" class="btn btn-warning btn-sm">✏️</a>
+                <a href="{% url 'inventario:delete' inv.id_inventario %}" class="btn btn-danger btn-sm">🗑️</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center">No hay inventario</td></tr>{% endfor %}
+    </tbody>
+</table>
+<table id="tabla-inventario">
+  {% for inv in inventarios %}
+  <tr>
+    <td>{{ inv.producto.nombre }}</td>
+    <td>
+      <input type="number" value="{{ inv.cantidad }}" data-id="{{ inv.id_inventario }}" class="stock-input">
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<script>
+document.querySelectorAll(".stock-input").forEach(input => {
+  input.addEventListener("change", () => {
+    fetch("/inventario/api/actualizar_stock/", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        id_inventario: input.dataset.id,
+        cantidad: input.value
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.ok) alert("✅ " + data.mensaje);
+      else alert("⚠️ Error: " + data.error);
+    });
+  });
+});
+</script>
+{% endblock %}
+<script>
+async function checkStock(invId, inputEl){
+  const resp = await fetch("{% url 'inventario:api_actualizar_stock' %}", {
+    method: "POST",
+    headers: {'Content-Type':'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
+    body: JSON.stringify({id_inventario: invId, cantidad: inputEl.value})
+  });
+  const data = await resp.json();
+  if(!data.ok) alert("Error: "+data.error);
+}
+
+// Ejemplo: cada 30s refresca (puedes mejorar con websocket)
+setInterval(async ()=>{
+  // aquí podrías refrescar tabla inventario via AJAX
+}, 30000);
+</script>
+
+

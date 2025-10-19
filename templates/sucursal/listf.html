@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Sucursales{% endblock %}
+{% block content %}
+<h2>🏥 Lista de Sucursales</h2>
+<a href="{% url 'farmacia:sucursal_create' %}" class="btn btn-success mb-3">+ Nueva Sucursal</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Departamento</th>
+            <th>Farmacia</th>
+            <th>NIT</th>
+            <th>Email</th>
+            <th>Dirección</th>
+            <th>Horario</th>
+            <th>Registro</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in sucursales %}
+        <tr>
+            <td>{{ s.nombre }}</td>
+            <td>{{ s.departamento }}</td>
+            <td>{{ s.farmacia.nombre_farmacia }}</td>
+            <td>{{ s.nit }}</td>
+            <td>{{ s.email }}</td>
+            <td>{{ s.direccion }}</td>
+            <td>{{ s.horario }}</td>
+            <td>{{ s.fecha_registroSucursal }}</td>
+            <td>
+                <a href="{% url 'farmacia:sucursal_update' s.id_sucursal %}" class="btn btn-sm btn-warning">✏️</a>
+                <a href="{% url 'farmacia:sucursal_delete' s.id_sucursal %}" class="btn btn-sm btn-danger">🗑️</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9">No hay sucursales registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

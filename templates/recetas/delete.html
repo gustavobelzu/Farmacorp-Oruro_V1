@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Eliminar Receta{% endblock %}
+{% block content %}
+<h2>Eliminar registro de Recetas {{ object.id_receta}}?</h2>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a href="{% url 'receta:list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

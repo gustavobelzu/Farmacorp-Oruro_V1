@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - Farmacorp{% endblock %}
+
+{% block content %}
+<div class="d-flex" id="wrapper">
+
+    <!-- Sidebar -->
+    <div class="border-end bg-primary text-white" id="sidebar-wrapper">
+        <div class="sidebar-heading text-center py-4">
+            <img src="{% static 'img/farmacorp_logo.png' %}" alt="Farmacorp Logo" width="150">
+        </div>
+
+        <div class="list-group list-group-flush">
+            {% if user.rol == "administrador" %}
+                <a href="{% url 'clientes:list' %}" class="list-group-item list-group-item-action bg-primary text-white">Clientes</a>
+                <a href="{% url 'empleados:list' %}" class="list-group-item list-group-item-action bg-primary text-white">Empleados</a>
+                <a href="{% url 'productos:list' %}" class="list-group-item list-group-item-action bg-primary text-white">Productos</a>
+                <a href="{% url 'proveedores:listp' %}" class="list-group-item list-group-item-action bg-primary text-white">Proveedores</a>
+                <a href="{% url 'inventario:list' %}" class="list-group-item list-group-item-action bg-primary text-white">Inventario</a>
+                <a href="{% url 'ventas:venta_list' %}" class="list-group-item list-group-item-action bg-primary text-white">Ventas</a>
+                <a href="{% url 'reportes:list' %}" class="list-group-item list-group-item-action bg-primary text-white">Reportes</a>
+                <a href="{% url 'alertas:alerta_list' %}" class="list-group-item list-group-item-action bg-primary text-white">Alertas</a>
+                <a href="{% url 'usuario:list' %}" class="list-group-item list-group-item-action bg-primary text-white">Usuarios</a>
+                <a href="{% url 'farmacia:list' %}" class="list-group-item list-group-item-action bg-primary text-white">Farmacia</a>
+                <a href="{% url 'farmacia:listf' %}" class="list-group-item list-group-item-action bg-primary text-white">Sucursal</a>
+
+
+
+            {% elif user.rol == "farmaceutico" %}
+                <a href="{% url 'ventas:venta_list' %}" class="list-group-item list-group-item-action bg-primary text-white">Ventas</a>
+                <a href="{% url 'recetas:list' %}" class="list-group-item list-group-item-action bg-primary text-white">Recetas</a>
+                <a href="{% url 'alertas:alerta_list' %}" class="list-group-item list-group-item-action bg-primary text-white">Alertas</a>
+
+            {% elif user.rol == "encargado_almacen" %}
+                <a href="{% url 'productos:list' %}" class="list-group-item list-group-item-action bg-primary text-white">Productos</a>
+                <a href="{% url 'inventario:list' %}" class="list-group-item list-group-item-action bg-primary text-white">Inventario</a>
+                <a href="{% url 'alertas:alerta_list' %}" class="list-group-item list-group-item-action bg-primary text-white">Alertas</a>
+
+            {% elif user.rol == "cliente" %}
+                <a href="{% url 'clientes:historial' %}" class="list-group-item list-group-item-action bg-primary text-white">Mis Compras</a>
+                <a href="{% url 'alertas:alerta_list' %}" class="list-group-item list-group-item-action bg-primary text-white">Promociones</a>
+            {% endif %}
+
+            <a href="{% url 'usuario:logout' %}" class="list-group-item list-group-item-action bg-danger text-white">Cerrar sesión</a>
+        </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Contenido principal -->
+    <div id="page-content-wrapper" class="w-100">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="btn btn-success" id="menu-toggle">☰ Menú</button>
+                <span class="navbar-text ms-auto fw-bold text-success">
+                    Bienvenido, {{ user.username|capfirst }}
+                </span>
+            </div>
+        </nav>
+
+        <div class="container-fluid mt-4">
+            {% if user.rol == "administrador" %}
+                <h1 class="text-primary">Panel Administrativo</h1>
+                <p class="lead">Resumen general del sistema Farmacorp.</p>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card shadow-sm text-center">
+                            <div class="card-body">
+                                <h5>Total Ventas</h5>
+                                <h4 class="text-success">{{ total_ventas }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card shadow-sm text-center">
+                            <div class="card-body">
+                                <h5>Clientes</h5>
+                                <h4 class="text-primary">{{ total_clientes }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card shadow-sm text-center">
+                            <div class="card-body">
+                                <h5>Productos</h5>
+                                <h4 class="text-warning">{{ total_productos }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card shadow-sm text-center">
+                            <div class="card-body">
+                                <h5>Alertas Activas</h5>
+                                <h4 class="text-danger">{{ total_alertas }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% elif user.rol == "farmaceutico" %}
+                <h1 class="text-primary">Panel del Farmacéutico</h1>
+                <p class="lead">Acceso rápido a ventas, recetas y alertas.</p>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <canvas id="ventasChart"></canvas>
+                    </div>
+                </div>
+
+            {% elif user.rol == "encargado_almacen" %}
+                <h1 class="text-primary">Panel de Almacén</h1>
+                <p class="lead">Supervisión del inventario y control de stock.</p>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+
+            {% elif user.rol == "cliente" %}
+                <h1 class="text-primary">Bienvenido a Farmacorp</h1>
+                <p class="lead">Consulta tus compras y recibe alertas de tus medicamentos.</p>
+                <div class="card mt-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Mis Compras Recientes</h5>
+                        <ul class="list-unstyled">
+                            {% for compra in compras %}
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    {{ compra.fecha }} - <strong>{{ compra.total }} Bs</strong>
+                                </li>
+                            {% empty %}
+                                <li class="text-muted">
+                                    <i class="bi bi-info-circle"></i>
+                                    No tienes compras registradas.
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Farmacia{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h2>Farmacia</h2>
+    <a href="{% url 'farmacia:create' %}" class="btn btn-success">Crear Farmacia </a>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr><th>Id_Farmacia</th><th>Nombre_Farmacia</th><th>Razon_Legal</th>
+    </thead>
+    <tbody>
+        {% for far in farmacia %}
+        <tr>
+            <td>{{ far.id_farmacia }}</td>
+            <td>{{ far.nombre_farmacia }}</td>
+            <td>{{ far.razon_legal }}</td>
+            
+            <td>
+                <a href="{% url 'farmaci:update' far.id_farmacia %}" class="btn btn-warning btn-sm">✏️</a>
+                <a href="{% url 'farmacia:delete' far.id_farmacia %}" class="btn btn-danger btn-sm">🗑️</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center">No hay Farmacia</td></tr>{% endfor %}
+    </tbody>
+</table>
+{% endblock %}

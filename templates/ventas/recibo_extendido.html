@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Recibo de Venta{% endblock %}
+{% block content %}
+<div class="recibo">
+    <h2>Farmacorp - Recibo de Venta</h2>
+    <p><strong>Venta:</strong> #{{ venta.id }}</p>
+    <p><strong>Cliente:</strong> {{ venta.cliente }}</p>
+    <p><strong>Empleado:</strong> {{ venta.empleado }}</p>
+    <hr>
+    <table class="table">
+        <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr></thead>
+        <tbody>
+            {% for d in detalles %}
+            <tr>
+                <td>{{ d.producto }}</td>
+                <td>{{ d.cantidad }}</td>
+                <td>Bs {{ d.precio_unitario }}</td>
+                <td>Bs {{ d.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h4>Total: Bs {{ total }}</h4>
+    <button onclick="window.print()" class="btn btn-primary">🖨 Imprimir</button>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+﻿{% extends "base.html" %}
+{% block title %}Empleados{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h2>👨‍⚕️ Empleados</h2>
+    <a href="{% url 'empleados:create' %}" class="btn btn-success">➕ Nuevo Empleado</a>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr><th>CI</th><th>Nombre</th><th>Cargo</th><th>Teléfono</th><th>Turno</th><th>Sucursal</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for emp in empleados %}
+        <tr>
+            <td>{{ emp.ci }}</td>
+            <td>{{ emp.nombre }}</td>
+            <td>{{ emp.cargo }}</td>
+            <td>{{ emp.telefono }}</td>
+            <td>{{ emp.turno }}</td>
+            <td>{{ emp.sucursal.nombre }}</td>
+            <td>
+                <a href="{% url 'empleados:update' emp.ci %}" class="btn btn-warning btn-sm">✏️</a>
+                <a href="{% url 'empleados:delete' emp.ci %}" class="btn btn-danger btn-sm">🗑️</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center">No hay empleados</td></tr>{% endfor %}
+    </tbody>
+</table>
+{% endblock %}

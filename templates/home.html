@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Farmacorp - Bienvenido{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero d-flex align-items-center justify-content-center text-center text-white">
+    <div class="container">
+        <img src="{% static 'img/farmacorp_logo.png' %}" alt="Farmacorp Logo" width="200" class="mb-4">
+        <h1 class="fw-bold">Bienvenido al Sistema de Farmacorp</h1>
+        <p class="lead">Gestion eficiente de farmacias, inventario, ventas y mas.</p>
+        <div class="mt-4">
+            <a href="{% url 'usuario:login' %}" class="btn btn-primary btn-lg me-3">Iniciar Sesion</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="features py-5">
+    <div class="container text-center">
+        <h2 class="mb-5 text-primary fw-bold">Que puedes hacer con Farmacorp?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 h-100">
+                    <div class="card-body">
+                        <i class="bi bi-cart-check display-4 text-success mb-3"></i>
+                        <h5 class="fw-bold">Ventas</h5>
+                        <p>Administra las ventas de forma rapida y segura, con facturacion y reportes.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 h-100">
+                    <div class="card-body">
+                        <i class="bi bi-box-seam display-4 text-warning mb-3"></i>
+                        <h5 class="fw-bold">Inventario</h5>
+                        <p>Controla el stock de productos en todas las sucursales y almacenes.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 h-100">
+                    <div class="card-body">
+                        <i class="bi bi-graph-up display-4 text-danger mb-3"></i>
+                        <h5 class="fw-bold">Reportes</h5>
+                        <p>Genera reportes completos en Excel o PDF para la toma de decisiones.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-primary text-white text-center py-3">
+    <p class="mb-0">2025 Farmacorp - Sistema de Gestion | Desarrollado en Django</p>
+</footer>
+{% endblock %}

@@ -1,0 +1,51 @@
+﻿{% extends "base.html" %}
+{% block title %}Proveedores{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">📦 Lista de Proveedores</h2>
+    <a href="{% url 'productos:proveedor_create' %}" class="btn btn-success">➕ Nuevo Proveedor</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-success">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Dirección</th>
+            <th>Estado</th>
+            <th>Registro</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for proveedor in proveedores %}
+        <tr>
+            <td>{{ proveedor.id_proveedor }}</td>
+            <td>{{ proveedor.nombre }}</td>
+            <td>{{ proveedor.telefono }}</td>
+            <td>{{ proveedor.email }}</td>
+            <td>{{ proveedor.direccion }}</td>
+            <td>
+                {% if proveedor.estado %}
+                    <span class="badge bg-success">Activo</span>
+                {% else %}
+                    <span class="badge bg-secondary">Inactivo</span>
+                {% endif %}
+            </td>
+            <td>{{ proveedor.fecha_registro|date:"d/m/Y" }}</td>
+            <td>
+                <a href="{% url 'proveedores:update' proveedor.id_proveedor %}" class="btn btn-warning btn-sm">✏️</a>
+                <a href="{% url 'proveedores:delete' proveedor.id_proveedor %}" class="btn btn-danger btn-sm">🗑️</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8" class="text-center text-muted">No hay proveedores registrados.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

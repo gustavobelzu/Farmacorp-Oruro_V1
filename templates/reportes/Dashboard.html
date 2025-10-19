@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard de Reportes{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="text-success mb-4">Dashboard de Reportes</h2>
+
+    <!-- FILTROS -->
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label for="fecha_inicio" class="form-label">Fecha inicio:</label>
+            <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control"
+                   value="{{ request.GET.fecha_inicio }}">
+        </div>
+        <div class="col-md-3">
+            <label for="fecha_fin" class="form-label">Fecha fin:</label>
+            <input type="date" name="fecha_fin" id="fecha_fin" class="form-control"
+                   value="{{ request.GET.fecha_fin }}">
+        </div>
+        <div class="col-md-3">
+            <label for="sucursal" class="form-label">Sucursal:</label>
+            <select name="sucursal" id="sucursal" class="form-select">
+                <option value="">Todas</option>
+                {% for s in sucursales %}
+                    <option value="{{ s.id }}" {% if request.GET.sucursal == s.id|stringformat:"s" %}selected{% endif %}>
+                        {{ s.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-success w-100">Filtrar</button>
+        </div>
+    </form>
+
+    <!-- TOTALES -->
+    <div class="alert alert-success text-center">
+        <h5>Total Ventas: <b>${{ total|floatformat:2 }}</b></h5>
+    </div>
+
+    <!-- TARJETAS DE GANANCIAS -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-primary shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Ingresos</h6>
+                    <h4 class="text-primary fw-bold">${{ ingresos|floatformat:2 }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-danger shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Costos</h6>
+                    <h4 class="text-danger fw-bold">${{ costos|floatformat:2 }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-success shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Ganancia Neta</h6>
+                    <h4 class="text-success fw-bold">${{ ganancia|floatformat:2 }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTONES DE EXPORTACIÓN -->
+    <div class="mb-4 text-end">
+        <a href="{% url 'reportes:exportar_excel' %}?fecha_inicio={{ request.GET.fecha_inicio }}&fecha_fin={{ request.GET.fecha_fin }}&sucursal={{ request.GET.sucursal }}"
+           class="btn btn-outline-success me-2">Exportar Excel</a>
+        <a href="{% url 'reportes:exportar_pdf' %}?fecha_inicio={{ request.GET.fecha_inicio }}&fecha_fin={{ request.GET.fecha_fin }}&sucursal={{ request.GET.sucursal }}"
+           class="btn btn-outline-danger">Exportar PDF</a>
+    </div>
+    <button id="downloadGanancias" class="btn btn-outline-success mt-2">
+    Descargar gráfico de Ganancias (PNG)
+    </button>
+
+    <script>
+    document.getElementById("downloadGanancias").addEventListener("click", () => {
+        const canvas = document.getElementById("gananciasChart");
+        const link = document.createElement("a");
+        link.download = "grafico_ganancias.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    });
+    </script>
+
+
+    <!-- GRÁFICO: VENTAS POR SUCURSAL -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title text-success">Ventas por Sucursal</h5>
+            <canvas id="ventasSucursalChart" height="100"></canvas>
+        </div>
+    </div>
+
+    <!-- GRÁFICO: INGRESOS VS COSTOS -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title text-success">Ingresos vs Costos</h5>
+            <canvas id="gananciasChart" height="100"
+                data-ingresos="{{ ingresos }}"
+                data-costos="{{ costos }}"
+                data-ganancia="{{ ganancia }}"></canvas>
+        </div>
+    </div>
+
+    <!-- GRÁFICO: TOP PRODUCTOS -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title text-success">Productos Más Vendidos</h5>
+            <canvas id="productosChart" height="120"></canvas>
+        </div>
+    </div>
+
+    <!-- TABLA DETALLE TOP PRODUCTOS -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title text-success">Detalle Top 10 Productos</h5>
+            <table class="table table-striped table-bordered">
+                <thead class="table-success">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad Vendida</th>
+                        <th>Total Vendido</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in top_productos %}
+                        <tr>
+                            <td>{{ p.nombre }}</td>
+                            <td>{{ p.cantidad_total }}</td>
+                            <td>${{ p.total_vendido|floatformat:2 }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="3" class="text-center">No hay datos disponibles</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+     // === Datos desde Django ===
+    const dataSucursal = JSON.parse('{{ data_grafico|escapejs }}');
+    const dataProductos = JSON.parse('{{ top_productos|escapejs }}');
+
+    // === Ventas por sucursal ===
+    const ctxSucursal = document.getElementById('ventasSucursalChart');
+    new Chart(ctxSucursal, {
+        type: 'bar',
+        data: {
+            labels: dataSucursal.map(d => d.sucursal__nombre),
+            datasets: [{
+                label: 'Total Ventas (Bs)',
+                data: dataSucursal.map(d => d.total),
+                backgroundColor: 'rgba(25, 135, 84, 0.6)',
+                borderColor: 'rgba(25, 135, 84, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // === Productos más vendidos ===
+    const ctxProductos = document.getElementById('productosChart');
+    new Chart(ctxProductos, {
+        type: 'bar',
+        data: {
+            labels: dataProductos.map(p => p.nombre),
+            datasets: [{
+                label: 'Cantidad Vendida',
+                data: dataProductos.map(p => p.cantidad_total),
+                backgroundColor: 'rgba(13, 110, 253, 0.6)',
+                borderColor: 'rgba(13, 110, 253, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Barras horizontales
+            responsive: true,
+            scales: { x: { beginAtZero: true } }
+        }
+    });
+
+    // === Gráfico de Ingresos vs Costos ===
+    const ctxGanancias = document.getElementById('gananciasChart');
+    const ingresos = parseFloat(ctxGanancias.dataset.ingresos);
+    const costos = parseFloat(ctxGanancias.dataset.costos);
+    const ganancia = parseFloat(ctxGanancias.dataset.ganancia);
+
+    new Chart(ctxGanancias, {
+        type: 'bar',
+        data: {
+            labels: ['Ingresos', 'Costos', 'Ganancia Neta'],
+            datasets: [{
+                label: 'Monto (Bs)',
+                data: [ingresos, costos, ganancia],
+                backgroundColor: [
+                    'rgba(13, 110, 253, 0.6)',
+                    'rgba(220, 53, 69, 0.6)',
+                    'rgba(25, 135, 84, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(13, 110, 253, 1)',
+                    'rgba(220, 53, 69, 1)',
+                    'rgba(25, 135, 84, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Formulario de Compra{% endblock %}
+{% block content %}
+<h2>{{ form.instance.pk|default:"Nueva" }} Compra</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="{% url 'productos:listc' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

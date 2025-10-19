@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Punto de Venta</h2>
+<form id="posForm" method="post" action="{% url 'ventas:venta_create' %}">
+    {% csrf_token %}
+
+    <label>Cliente:</label>
+    <select name="cliente" required>
+        {% for c in clientes %}
+        <option value="{{ c.id_cliente }}">{{ c.nombre }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Empleado:</label>
+    <select name="empleado" required>
+        {% for e in empleados %}
+        <option value="{{ e.id_empleado }}">{{ e.nombre }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Sucursal:</label>
+    <select name="sucursal" required>
+        {% for s in sucursales %}
+        <option value="{{ s.id_sucursal }}">{{ s.nombre }}</option>
+        {% endfor %}
+    </select>
+
+    <table id="posTable" class="table">
+        <thead>
+            <tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Desc %</th><th>Subtotal</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <select name="producto">
+                        {% for p in productos %}
+                        <option value="{{ p.codigo_barras }}" data-precio="{{ p.precio_unitario }}">{{ p.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input type="number" name="cantidad" class="qty" value="1" min="1"></td>
+                <td><input type="text" class="price" readonly></td>
+                <td><input type="number" name="descuento" class="discount" value="0" min="0"></td>
+                <td><span class="subtotal">0.00</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>Total: <span id="totalLabel">0.00</span></p>
+
+    <button type="button" id="verifyBtn" class="btn btn-primary">Verificar</button>
+    <button type="submit" id="submitBtn" class="btn btn-success" disabled>Pagar</button>
+</form>
+
+<script>
+function calcularFila(row){
+  let select = row.querySelector("select[name='producto']");
+  let price = Number(select.options[select.selectedIndex].dataset.precio);
+  row.querySelector(".price").value = price.toFixed(2);
+  let qty = Number(row.querySelector(".qty").value);
+  let disc = Number(row.querySelector(".discount").value);
+  let subtotal = price * qty * (1 - disc/100);
+  row.querySelector(".subtotal").textContent = subtotal.toFixed(2);
+  return subtotal;
+}
+
+function recalcularTotal(){
+  let total = 0;
+  document.querySelectorAll("#posTable tbody tr").forEach(r=>{
+    total += calcularFila(r);
+  });
+  document.getElementById("totalLabel").textContent = total.toFixed(2);
+  return total;
+}
+
+document.querySelectorAll("#posTable input, #posTable select").forEach(el=>{
+  el.addEventListener("input", recalcularTotal);
+});
+recalcularTotal();
+
+document.getElementById("verifyBtn").addEventListener("click", async ()=>{
+  let items = [];
+  document.querySelectorAll("#posTable tbody tr").forEach(r=>{
+    items.push({
+      codigo: r.querySelector("select").value,
+      cantidad: r.querySelector(".qty").value,
+      descuento: r.querySelector(".discount").value
+    });
+  });
+
+  const resp = await fetch("{% url 'ventas:api_verificar_total' %}", {
+    method: "POST",
+    headers: {"Content-Type":"application/json", "X-CSRFToken": "{{ csrf_token }}"},
+    body: JSON.stringify({items: items})
+  });
+  const data = await resp.json();
+
+  let totalCliente = parseFloat(document.getElementById("totalLabel").textContent);
+  let totalServer = parseFloat(data.total);
+  if(data.ok && totalCliente === totalServer){
+    alert("Totales correctos. Puede proceder.");
+    document.getElementById("submitBtn").disabled = false;
+  } else {
+    alert("Diferencia detectada. Total servidor: "+totalServer);
+    document.getElementById("totalLabel").textContent = totalServer.toFixed(2);
+  }
+});
+</script>
+{% endblock %}
+
+

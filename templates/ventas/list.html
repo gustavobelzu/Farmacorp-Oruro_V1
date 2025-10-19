@@ -1,0 +1,38 @@
+﻿{% extends 'base.html' %}
+{% block title %}Listado de Ventas{% endblock %}
+{% block content %}
+<h2>📋 Ventas Registradas</h2>
+<a href="{% url 'ventas:venta_create' %}" class="btn btn-success mb-3">+ Nueva Venta</a>
+<a href="{% url 'ventas:venta_pos' %}" class="btn btn-success mb-3">+POS</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Empleado</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for v in ventas %}
+        <tr>
+            <td>{{ v.id }}</td>
+            <td>{{ v.cliente }}</td>
+            <td>{{ v.empleado }}</td>
+            <td>Bs {{ v.total }}</td>
+            <td>{{ v.estado }}</td>
+            <td>
+                <a href="{% url 'ventas:detalle' v.id %}" class="btn btn-primary btn-sm">🔍 Ver</a>
+                <a href="{% url 'ventas:update' v.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+                <a href="{% url 'ventas:delete' v.id %}" class="btn btn-danger btn-sm">🗑 Eliminar</a>
+                <a href="{% url 'ventas:venta_validar' v.id %}" class="btn btn-info btn-sm">🧾 Ver Factura</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No hay ventas registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,35 @@
+﻿{% extends "base.html" %}
+{% block title %}Alertas del Sistema{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="text-danger mb-4">Alertas del Sistema</h2>
+
+  {% if alertas %}
+  <table class="table table-bordered table-striped">
+    <thead class="table-danger">
+      <tr>
+        <th>Tipo</th>
+        <th>Producto</th>
+        <th>Descripción</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in alertas %}
+      <tr>
+        <td><span class="badge bg-danger">{{ a.tipo }}</span></td>
+        <td>{{ a.producto.nombre }}</td>
+        <td>{{ a.descripcion }}</td>
+        <td>{{ a.fecha_alerta|date:"d/m/Y H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="alert alert-success text-center">
+    ✅ No hay alertas activas actualmente.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
